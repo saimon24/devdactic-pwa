@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Plugins } from '@capacitor/core';
 const { Network } = Plugins;
 
@@ -8,13 +8,18 @@ const { Network } = Plugins;
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
   users = [];
   joke = null;
   
   appIsOnline = true;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient) { }
+
+  async ngOnInit() {
+    const status = await Network.getStatus();
+    this.appIsOnline = status.connected;
+
     Network.addListener('networkStatusChange', (status) => {
       console.log("Network status changed", status);
       this.appIsOnline = status.connected;
